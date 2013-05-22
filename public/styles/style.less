@@ -1,0 +1,45 @@
+@font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+@linkColor: #00b7ff;
+
+@contentWidth: 800px;
+
+@msgWindowWidth: 690px;
+@msgWindowHeight: 300px;
+@msgWindowBgColor: #eee;
+
+@roomWindowBgColor: #ddd;
+
+.size {
+	width: @contentWidth;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+body {
+	padding: 50px;
+	font: @font;
+}
+a {
+	color: @linkColor;
+}
+
+form {
+	.size;
+}
+
+#content {
+	.size;
+	display: none;
+}
+#users {
+	background-color: @roomWindowBgColor;
+	margin-bottom: 1em;
+}
+#document {
+	width: @msgWindowWidth;
+	height: @msgWindowHeight;
+	overflow: auto;
+	background-color: @msgWindowBgColor;
+	margin-bottom: 1em;
+	margin-right: 10px;
+}
