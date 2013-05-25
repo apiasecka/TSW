@@ -14,13 +14,19 @@
 		
 		<div id="content">
 			<div id="document" contenteditable="true">
-				<div class="line1">Zaczynamy!</div>
+				<div class="line0">Zaczynamy!</div>
 			</div>
 			<div id="users"></div>
 		</div>
+		
+		<!--<div id="area" style="width:300px;height:300px;" onblur="onDivBlur();" onmousedown="return cancelEvent(event);" onclick="return cancelEvent(event);" contentEditable="true" onmouseup="saveSelection();" onkeyup="saveSelection();" onfocus="restoreSelection();"></div>-->
 		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
 		<script src="/scripts/jquery.min.js" type="text/javascript"></script>
+		<script src="/scripts/jquery.caret.1.02.js" type="text/javascript"></script>
 		<script src="/scripts/edit.js" type="text/javascript"></script>
 		<script src="/scripts/edit_ui.js" type="text/javascript"></script>
+		
+		
+		
 	</body>
 </html>

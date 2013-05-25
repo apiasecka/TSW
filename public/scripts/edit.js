@@ -6,6 +6,13 @@ Editor.prototype.UserNick = function(nick){
 	this.socket.emit('nick', nick);
 };
 
+Editor.prototype.ChangeDoc = function(key/*, start, startNode*/){
+	this.socket.emit('key', {
+		'key': key
+	});
+};
+
+/*
 Editor.prototype.ChangeDoc = function(key, start, startNode){
 	this.socket.emit('key', {
 		'key': key, 
@@ -13,3 +20,4 @@ Editor.prototype.ChangeDoc = function(key, start, startNode){
 		'startNode': startNode
 	});
 };
+*/
