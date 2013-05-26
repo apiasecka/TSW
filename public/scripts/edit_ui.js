@@ -56,6 +56,8 @@ $(document).ready(function () {
 	$("#document").keyup(function(e){
 		//console.log('keyup' + e.keyCode);
 		var position_line;
+		var selection = window.getSelection().getRangeAt(0).startContainer;
+		
 		if(e.keyCode == 8){ //backspace
 			//Renumber();
 			if($("#document").find('div').length){}
@@ -70,13 +72,18 @@ $(document).ready(function () {
 			//console.log(window.getSelection().getRangeAt(0).commonAncestorContainer.id);
 			
 			
-			position_line = window.getSelection().getRangeAt(0).startContainer;
+			if(selection.nodeName == "DIV") {
+				position_line = selection;
+			} else {
+				position_line = selection.parentNode;
+			}
+			
 			//console.log(position_line);
 			$(position_line).removeClass().addClass('line' + line);
-			console.log($(position_line).attr('class'));
+			console.log($(position_line).attr('class') + ' ' + line);
 			line++;
 		} else {
-			position_line = window.getSelection().getRangeAt(0).startContainer.parentNode;
+			position_line = selection.parentNode;
 			console.log($(position_line).attr('class'));
 		}
 		
@@ -128,6 +135,60 @@ $(document).ready(function () {
 	
 	// ------------------------------------------
 	
+		
 	
+var savedRange,isInFocus;
+function saveSelection(){
+        //savedRange = ;
+		//window.getSelection().getRangeAt(0).startContainer.parentNode.id;
+	
+}
+
+function restoreSelection()
+{
+    isInFocus = true;
+    document.getElementById("area").focus();
+    if (savedRange != null) {
+        if (window.getSelection)//non IE and there is already a selection
+        {
+            var s = window.getSelection();
+            if (s.rangeCount > 0) 
+                s.removeAllRanges();
+            s.addRange(savedRange);
+        }
+        else 
+            if (document.createRange)//non IE and no selection
+            {
+                window.getSelection().addRange(savedRange);
+            }
+            else 
+                if (document.selection)//IE
+                {
+                    savedRange.select();
+                }
+    }
+}
+//this part onwards is only needed if you want to restore selection onclick
+var isInFocus = false;
+function onDivBlur()
+{
+    isInFocus = false;
+}
+
+function cancelEvent(e)
+{
+    if (isInFocus == false && savedRange != null) {
+        if (e && e.preventDefault) {
+            //alert("FF");
+            e.stopPropagation(); // DOM style (return false doesn't always work in FF)
+            e.preventDefault();
+        }
+        else {
+            window.event.cancelBubble = true;//IE stopPropagation
+        }
+        restoreSelection();
+        return false; // false = IE style
+    }
+}
 
 });
