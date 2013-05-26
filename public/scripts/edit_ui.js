@@ -8,6 +8,10 @@ $(document).ready(function () {
 	var Unick;
 	var line = 1;
 	
+	socket.on('line', function (line_all) {
+		line = line_all.number;
+	});
+	
 	socket.on('nick', function (nickNames) {
 		console.log(nickNames.nick);
         $('#nick').css({'display': 'none'});
@@ -16,11 +20,12 @@ $(document).ready(function () {
 	
 	socket.on('key', function (e) {
 		//setCaretPos(e.startNode, e.start);
-		console.log(e.key);
+		console.log('line: ' + line);
 		if(e.key == 13){
-			$('#document').append('<div class="new"></div>');
+			$('#document').append('<div class="line' + line + '"></div>');
 		} else {
-			$('#document').append(e.text);
+			console.log('key line: ' + e.line + ', key text: ' + e.text);
+			$('#document .' + e.line).append(e.text);
 		}
 		//console.log(e.key);
     }); 
@@ -64,6 +69,7 @@ $(document).ready(function () {
 			else {
 				$('#document').append('<div class="line' + line + '"></div>');
 				line++;
+				appEditor.ChangeLine(line);
 			}
 		}
 		
@@ -80,8 +86,9 @@ $(document).ready(function () {
 			
 			//console.log(position_line);
 			$(position_line).removeClass().addClass('line' + line);
-			console.log($(position_line).attr('class') + ' ' + line);
+			//console.log($(position_line).attr('class') + ' ' + line);
 			line++;
+			appEditor.ChangeLine(line);
 		} else {
 			position_line = selection.parentNode;
 			console.log($(position_line).attr('class'));
@@ -92,36 +99,26 @@ $(document).ready(function () {
 		//saveSelection();
 	});
 	
-	function getCaretClientPosition() {
-    var x = 0, y = 0;
-    var sel = window.getSelection();
-    if (sel.rangeCount) {
-        var range = sel.getRangeAt(0);
-        if (range.getClientRects) {
-            var rects = range.getClientRects();
-            if (rects.length > 0) {
-                x = rects[0].left;
-                y = rects[0].top;
-            }
-        }
-    }
-    return { x: x, y: y };
-}
-
 	function showCaretPos() {
 		var pos = getCaretClientPosition();
 		//console.log("Caret position: " + pos.x + ", " + pos.y);
 	}
 	
-	$("#document").keypress(function(key, appEditor) {
-		
-		KeyUp(key.keyCode);
+	$("#document").keypress(function(key) {
+	var akt_class;
+	if(window.getSelection().getRangeAt(0).commonAncestorContainer.nodeValue == null){
+		akt_class = $(window.getSelection().getRangeAt(0).startContainer).attr('class');
+	} else {
+		akt_class = $(window.getSelection().getRangeAt(0).startContainer.parentNode).attr('class');
+	}
+	console.log('keypress ' + akt_class);
+		KeyUp(key.keyCode, akt_class);
 	});
 	
-	var KeyUp = function(key){
+	var KeyUp = function(key, line){
 		
-		//console.log('start: ' + start);
-		appEditor.ChangeDoc(key);
+		//console.log('line: ' + line);
+		appEditor.ChangeDoc(key, line);
 	};
 	
 	
@@ -131,64 +128,6 @@ $(document).ready(function () {
 		});
 	};
 	
-	
-	
-	// ------------------------------------------
-	
-		
-	
-var savedRange,isInFocus;
-function saveSelection(){
-        //savedRange = ;
-		//window.getSelection().getRangeAt(0).startContainer.parentNode.id;
-	
-}
 
-function restoreSelection()
-{
-    isInFocus = true;
-    document.getElementById("area").focus();
-    if (savedRange != null) {
-        if (window.getSelection)//non IE and there is already a selection
-        {
-            var s = window.getSelection();
-            if (s.rangeCount > 0) 
-                s.removeAllRanges();
-            s.addRange(savedRange);
-        }
-        else 
-            if (document.createRange)//non IE and no selection
-            {
-                window.getSelection().addRange(savedRange);
-            }
-            else 
-                if (document.selection)//IE
-                {
-                    savedRange.select();
-                }
-    }
-}
-//this part onwards is only needed if you want to restore selection onclick
-var isInFocus = false;
-function onDivBlur()
-{
-    isInFocus = false;
-}
-
-function cancelEvent(e)
-{
-    if (isInFocus == false && savedRange != null) {
-        if (e && e.preventDefault) {
-            //alert("FF");
-            e.stopPropagation(); // DOM style (return false doesn't always work in FF)
-            e.preventDefault();
-        }
-        else {
-            window.event.cancelBubble = true;//IE stopPropagation
-        }
-        restoreSelection();
-        return false; // false = IE style
-    }
-}
 
 });
