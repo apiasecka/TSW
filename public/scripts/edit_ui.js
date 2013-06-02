@@ -19,14 +19,9 @@ $(document).ready(function () {
     }); 
 	
 	socket.on('key', function (e) {
-		//setCaretPos(e.startNode, e.start);
-		//console.log('line: ' + line);
-		//setCaret(e.position);
-		
 		var text = $('#document .' + e.line).html(),
 			text2 = $('#document .' + e.line).html();
 		
-		//if(text == null){
 		if(e.key == 13 && text == null){
 			//$('#document').append('<div class="line' + line + '"></div>');
 			$('#document .' + e.line).after('<div class="line' + line + '"></div>');
@@ -72,7 +67,6 @@ $(document).ready(function () {
 	
 	
 	$("#document").keyup(function(e){
-		//console.log('keyup' + e.keyCode);
 		var position_line;
 		var selection = window.getSelection().getRangeAt(0).startContainer;
 		
@@ -86,8 +80,6 @@ $(document).ready(function () {
 		}
 		
 		if(e.keyCode == 13){ //enter
-			//Renumber();
-			//console.log(window.getSelection().getRangeAt(0).commonAncestorContainer.id);
 			
 			
 			if(selection.nodeName == "DIV") {
@@ -96,9 +88,7 @@ $(document).ready(function () {
 				position_line = selection.parentNode;
 			}
 			
-			//console.log(position_line);
 			$(position_line).removeClass().addClass('line' + line);
-			//console.log($(position_line).attr('class') + ' ' + line);
 			line++;
 			appEditor.ChangeLine(line);
 		} else {
@@ -127,13 +117,6 @@ $(document).ready(function () {
 		
 		//console.log('line: ' + line);
 		appEditor.ChangeDoc(key, line, offSet);
-	};
-	
-	
-	var Renumber = function(){
-		$('#document > div').each(function(index, el){
-			$(this).removeClass().addClass('line' + index);
-		});
 	};
 	
 
