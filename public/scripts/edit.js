@@ -6,10 +6,11 @@ Editor.prototype.UserNick = function(nick){
 	this.socket.emit('nick', nick);
 };
 
-Editor.prototype.ChangeDoc = function(key, line){
+Editor.prototype.ChangeDoc = function(key, line, offSet){
 	this.socket.emit('key', {
 		'key': key,
-		'line': line
+		'line': line,
+		'position': offSet
 	});
 };
 
