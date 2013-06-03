@@ -8,6 +8,8 @@ $(document).ready(function () {
 	var Unick;
 	var line = 1;
 	
+	/* ------------------------ BEGIN socket ------------------------ */
+	
 	socket.on('line', function (line_all) {
 		line = line_all.number;
 	});
@@ -39,6 +41,17 @@ $(document).ready(function () {
 		//console.log(e.key);
     }); 
 	
+	socket.on('keyDel', function (e) {
+		text = $('#document .' + e.line).html();
+		console.log('keyDel' + e.empty + ', line: ' + e.line);
+		if(e.empty){
+			$('.' + e.line).remove();
+		} else {
+			
+		}
+	}); 
+	
+	/* ------------------------ END socket ------------------------ */
 	
 	$('button').click(function(){
 		Nick(appEditor);
@@ -54,10 +67,25 @@ $(document).ready(function () {
 	};
 	
 	$("#document").keydown(function(e){
+		var akt_class, 
+			empty,
+			offSet = window.getSelection().getRangeAt(0).startOffset;
 		//console.log('keydown' + e.keyCode);
 		if(e.keyCode == 46){ //delete
 			//return false;
 		} 
+		
+		if(e.keyCode == 8){ //backspace
+			if(window.getSelection().getRangeAt(0).commonAncestorContainer.nodeValue == null){
+				akt_class = $(window.getSelection().getRangeAt(0).startContainer).attr('class');
+				empty = true;
+			} else {
+				akt_class = $(window.getSelection().getRangeAt(0).startContainer.parentNode).attr('class');
+				empty = false;
+			}
+			console.log('keydown: ' + akt_class);
+			KeyUpDel(e.keyCode, akt_class, offSet, empty);
+		}
 		
 	});
 	
@@ -67,20 +95,22 @@ $(document).ready(function () {
 	
 	
 	$("#document").keyup(function(e){
-		var position_line;
-		var selection = window.getSelection().getRangeAt(0).startContainer;
+		var position_line,
+			selection = window.getSelection().getRangeAt(0).startContainer,
+			offSet = window.getSelection().getRangeAt(0).startOffset;
 		
 		if(e.keyCode == 8){ //backspace
+			var akt_class, empty;
 			if($("#document").find('div').length){}
 			else {
 				$('#document').append('<div class="line' + line + '"></div>');
 				line++;
 				appEditor.ChangeLine(line);
 			}
+			
 		}
 		
 		if(e.keyCode == 13){ //enter
-			
 			
 			if(selection.nodeName == "DIV") {
 				position_line = selection;
@@ -100,16 +130,14 @@ $(document).ready(function () {
 	
 	
 	$("#document").keypress(function(key) {
-	var akt_class, offSet;
-	
-	offSet = window.getSelection().getRangeAt(0).startOffset;
-	
-	if(window.getSelection().getRangeAt(0).commonAncestorContainer.nodeValue == null){
-		akt_class = $(window.getSelection().getRangeAt(0).startContainer).attr('class');
-	} else {
-		akt_class = $(window.getSelection().getRangeAt(0).startContainer.parentNode).attr('class');
-	}
-	console.log('keypress ' + akt_class);
+		var akt_class, 
+			offSet = window.getSelection().getRangeAt(0).startOffset;
+		
+		if(window.getSelection().getRangeAt(0).commonAncestorContainer.nodeValue == null){
+			akt_class = $(window.getSelection().getRangeAt(0).startContainer).attr('class');
+		} else {
+			akt_class = $(window.getSelection().getRangeAt(0).startContainer.parentNode).attr('class');
+		}
 		KeyUp(key.keyCode, akt_class, offSet);
 	});
 	
@@ -119,6 +147,9 @@ $(document).ready(function () {
 		appEditor.ChangeDoc(key, line, offSet);
 	};
 	
-
-
+	var KeyUpDel = function(key, line, offSet, empty){
+		
+		//console.log('line: ' + line);
+		appEditor.ChangeDocDel(key, line, offSet, empty);
+	};
 });
