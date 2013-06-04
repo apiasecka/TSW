@@ -42,12 +42,19 @@ $(document).ready(function () {
     }); 
 	
 	socket.on('keyDel', function (e) {
-		text = $('#document .' + e.line).html();
-		console.log('keyDel' + e.empty + ', line: ' + e.line);
+		var text = $('#document .' + e.line).html(),
+			attr_prev;
+			
+		console.log('keyDel ' + e.empty + ', line: ' + e.line);
 		if(e.empty){
 			$('.' + e.line).remove();
+		} else if(e.position == 0) {
+			attr_prev = $('#document .' + e.line).prev().attr('class');
+			$('.' + attr_prev).append(text);
+			$('.' + e.line).remove();
 		} else {
-			
+			text = text.slice(0, e.position-1) + text.slice(e.position, text.length);
+			$('#document .' + e.line).html(text);
 		}
 	}); 
 	
